@@ -41,11 +41,13 @@ class ExchGwApiOkexWs(WebSocketApiClient):
 
     @classmethod
     def get_order_book_subscription_string(cls, instmt):
-        return json.dumps({'event':'addChannel','channel':'ok_sub_futureusd_{}_depth_this_week'.format(instmt.instmt_code)})
+        _l = instmt.instmt_code.split('.')
+        return json.dumps({'event':'addChannel','channel':'ok_sub_futureusd_{}_depth_{}'.format(_l[0], _l[1])})
 
     @classmethod
     def get_trades_subscription_string(cls, instmt):
-        return json.dumps({'event':'addChannel','channel':'ok_sub_futureusd_{}_trade_this_week'.format(instmt.instmt_code)})
+        _l = instmt.instmt_code.split('.')
+        return json.dumps({'event':'addChannel','channel':'ok_sub_futureusd_{}_trade_{}'.format(_l[0], _l[1])})
 
     @classmethod
     def parse_l2_depth(cls, instmt, raw):
@@ -168,13 +170,13 @@ class ExchGwOkex(ExchangeGateway):
         """
         for item in message:
             if 'channel' in item:
-                if re.search(r'ok_sub_futureusd_(.*)_depth_this_week', item['channel']):
+                if re.search(r'ok_sub_futureusd_(.*)_depth_(.*)', item['channel']):
                     instmt.set_prev_l2_depth(instmt.get_l2_depth().copy())
                     self.api_socket.parse_l2_depth(instmt, item['data'])
                     if instmt.get_l2_depth().is_diff(instmt.get_prev_l2_depth()):
                         instmt.incr_order_book_id()
                         self.insert_order_book(instmt)
-                elif re.search(r'ok_sub_futureusd_(.*)_trade_this_week', item['channel']):
+                elif re.search(r'ok_sub_futureusd_(.*)_trade_(.*)', item['channel']):
                     trades = self.api_socket.parse_trade(instmt, item['data'])
                     for trade in trades:
                         if trade.trade_id != instmt.get_exch_trade_id():
