@@ -12,7 +12,7 @@ class ExchangeGateway:
     # Static variable
     # Applied on all gateways whether to record the timestamp in local machine,
     # rather than exchange timestamp given by the API
-    is_local_timestamp = False
+    is_local_timestamp = True
     ############################################################################
 
     """
@@ -115,7 +115,7 @@ class ExchangeGateway:
         """
         # If local timestamp indicator is on, assign the local timestamp again
         if self.is_local_timestamp:
-            instmt.get_l2_depth().date_time = datetime.utcnow().strftime("%Y%m%d %H:%M:%S.%f")
+            instmt.get_l2_depth().date_time += '<->' + datetime.utcnow().strftime("%Y%m%d %H:%M:%S.%f")
 
         # Update the snapshot
         if instmt.get_l2_depth() is not None:
@@ -156,13 +156,13 @@ class ExchangeGateway:
             return
 
         # If local timestamp indicator is on, assign the local timestamp again
-        if self.is_local_timestamp:
-            trade.date_time = datetime.utcnow().strftime("%Y%m%d %H:%M:%S.%f")
-
         date_time = datetime.strptime(trade.date_time, "%Y%m%d %H:%M:%S.%f").date()
         if date_time != self.date_time:
             self.date_time = date_time
             self.init_instmt_snapshot_table(instmt)
+        if self.is_local_timestamp:
+            trade.date_time += '<->' + datetime.utcnow().strftime("%Y%m%d %H:%M:%S.%f")
+
 
         # Set the last trade to the current one
         instmt.set_last_trade(trade)
