@@ -41,11 +41,11 @@ class ExchGwApiFcoinWs(WebSocketApiClient):
 
     @classmethod
     def get_order_book_subscription_string(cls, instmt):
-        return json.dumps({"type": "topics", "topics": ["ticker.%s" % instmt.instmt_code, "depth.L20.%s" % instmt.instmt_code]})
+        return json.dumps({"cmd": "sub", "args": ["ticker.%s" % instmt.instmt_code, "depth.L20.%s" % instmt.instmt_code]})
 
     @classmethod
     def get_trades_subscription_string(cls, instmt):
-        return json.dumps({"type": "topics", "topics": ["depth.L20.%s" % instmt.instmt_code]})
+        return json.dumps({"cmd": "sub", "args": ["depth.L20.%s" % instmt.instmt_code]})
 
     @classmethod
     def parse_l2_depth(cls, instmt, raw):
@@ -53,34 +53,54 @@ class ExchGwApiFcoinWs(WebSocketApiClient):
         Parse raw data to L2 depth
         :param instmt: Instrument
         :param raw: Raw data in JSON
+        {
+            "type": "ticker.btcusdt",
+            "seq": 680035,
+            "ticker": [
+              7140.890000000000000000,
+              1.000000000000000000,
+              7131.330000000,
+              233.524600000,
+              7140.890000000,
+              225.495049866,
+              7140.890000000,
+              7140.890000000,
+              7140.890000000,
+              1.000000000,
+              7140.890000000000000000
+            ]
+        }
+        depth
+        {
+          "type": "depth.L20.ethbtc",
+          "ts": 1523619211000,
+          "seq": 120,
+          "bids": [0.000100000, 1.000000000, 0.000010000, 1.000000000],
+          "asks": [1.000000000, 1.000000000]
+        }
         """
         l2_depth = instmt.get_l2_depth()
         keys = list(raw.keys())
-        if cls.get_bids_field_name() in keys and \
-           cls.get_asks_field_name() in keys:
 
-            # Date time
-            timestamp = raw['timestamp']
-            l2_depth.date_time = datetime.utcfromtimestamp(timestamp/1000.0).strftime("%Y%m%d %H:%M:%S.%f")
+        # if raw['type'].startswith('ticker'):
+        #     pass
+        if raw['type'].startswith('depth'):
+            timestamp = raw['ts']
+            l2_depth.date_time = datetime.utcfromtimestamp(timestamp / 1000.0).strftime("%Y%m%d %H:%M:%S.%f")
+            depth = 5
+            bids = raw['bids']
+            asks = raw['asks']
+            bids_len = min(len(bids) / 2, depth)
+            asks_len = min(len(asks) / 2, depth)
+            for i in range(bids_len):
+                l2_depth.bids[i].price = float(bids[i * 2])
+                l2_depth.bids[i].volume = float(bids[i * 2 + 1])
+            for i in range(asks_len):
+                l2_depth.asks[i].price = float(asks[i * 2])
+                l2_depth.asks[i].volume = float(asks[i * 2 + 1])
 
-            # Bids
-            bids = raw[cls.get_bids_field_name()]
-            bids_len = min(l2_depth.depth, len(bids))
-            for i in range(0, bids_len):
-                l2_depth.bids[i].price = float(bids[i][0]) if type(bids[i][0]) != float else bids[i][0]
-                l2_depth.bids[i].volume = float(bids[i][1]) if type(bids[i][1]) != float else bids[i][1]
-
-            # Asks
-            asks = raw[cls.get_asks_field_name()]
-            asks_len = min(l2_depth.depth, len(asks))
-            for i in range(0, asks_len):
-                l2_depth.asks[i].price = float(asks[i][0]) if type(asks[i][0]) != float else asks[i][0]
-                l2_depth.asks[i].volume = float(asks[i][1]) if type(asks[i][1]) != float else asks[i][1]
-        else:
-            raise Exception('Does not contain order book keys in instmt %s-%s.\nOriginal:\n%s' % \
-                (instmt.get_exchange_name(), instmt.get_instmt_name(), \
-                 raw))
         return l2_depth
+
 
     @classmethod
     def parse_trade(cls, instmt, raws):
@@ -88,31 +108,54 @@ class ExchGwApiFcoinWs(WebSocketApiClient):
         :param instmt: Instrument
         :param raw: Raw data in JSON
         :return:
+        trade
+        {
+          "type":"trade.ethbtc",
+          "id":76000,
+          "amount":1.000000000,
+          "ts":1523419946174,
+          "side":"sell",
+          "price":4.000000000
+        }
         """
-
         trades = []
-        for item in raws:
-            trade = Trade()
-            today = datetime.today().date()
-            time = item[3]
-            #trade.date_time = datetime.utcfromtimestamp(date_time/1000.0).strftime("%Y%m%d %H:%M:%S.%f")
-            #Convert local time as to UTC.
-            date_time = datetime(today.year, today.month, today.day,
-                                 *list(map(lambda x: int(x), time.split(':'))),
-                                 tzinfo = get_localzone()
-            )
-            trade.date_time = date_time.astimezone(pytz.utc).strftime('%Y%m%d %H:%M:%S.%f')
-            # Trade side
-            # Buy = 0
-            # Side = 1
-            trade.trade_side = Trade.parse_side(item[4])
-            # Trade id
-            trade.trade_id = str(item[0])
-            # Trade price
-            trade.trade_price = item[1]
-            # Trade volume
-            trade.trade_volume = item[2]
-            trades.append(trade)
+
+        trade = Trade()
+        trade.date_time = datetime.utcfromtimestamp(raws['ts'] / 1000.0).strftime("%Y%m%d %H:%M:%S.%f")
+        # Trade side
+        # Buy = 0
+        # Side = 1
+        trade.trade_side = Trade.Side.BUY if raws['side'] == 'buy' else Trade.Side.SELL
+        # Trade id
+        trade.trade_id = str(raws['id'])
+        # Trade price
+        trade.trade_price = raws['price']
+        # Trade volume
+        trade.trade_volume = raws['amount']
+        trades.append(trade)
+
+        # for item in raws:
+        #     trade = Trade()
+        #     today = datetime.today().date()
+        #     time = item[3]
+        #     #trade.date_time = datetime.utcfromtimestamp(date_time/1000.0).strftime("%Y%m%d %H:%M:%S.%f")
+        #     #Convert local time as to UTC.
+        #     date_time = datetime(today.year, today.month, today.day,
+        #                          *list(map(lambda x: int(x), time.split(':'))),
+        #                          tzinfo = get_localzone()
+        #     )
+        #     trade.date_time = date_time.astimezone(pytz.utc).strftime('%Y%m%d %H:%M:%S.%f')
+        #     # Trade side
+        #     # Buy = 0
+        #     # Side = 1
+        #     trade.trade_side = Trade.parse_side(item[4])
+        #     # Trade id
+        #     trade.trade_id = str(item[0])
+        #     # Trade price
+        #     trade.trade_price = item[1]
+        #     # Trade volume
+        #     trade.trade_volume = item[2]
+        #     trades.append(trade)
         return trades
 
 
@@ -165,22 +208,76 @@ class ExchGwFcoin(ExchangeGateway):
         Incoming message handler
         :param instmt: Instrument
         :param message: Message
+        {
+            "type": "ticker.btcusdt",
+            "seq": 680035,
+            "ticker": [
+              7140.890000000000000000,
+              1.000000000000000000,
+              7131.330000000,
+              233.524600000,
+              7140.890000000,
+              225.495049866,
+              7140.890000000,
+              7140.890000000,
+              7140.890000000,
+              1.000000000,
+              7140.890000000000000000
+            ]
+        }
+        depth
+        {
+          "type": "depth.L20.ethbtc",
+          "ts": 1523619211000,
+          "seq": 120,
+          "bids": [0.000100000, 1.000000000, 0.000010000, 1.000000000],
+          "asks": [1.000000000, 1.000000000]
+        }
+        trade
+        {
+          "type":"trade.ethbtc",
+          "id":76000,
+          "amount":1.000000000,
+          "ts":1523419946174,
+          "side":"sell",
+          "price":4.000000000
+        }
         """
-        for item in message:
-            if 'channel' in item:
-                if re.search(r'ok_sub_futureusd_(.*)_depth_(.*)', item['channel']):
-                    instmt.set_prev_l2_depth(instmt.get_l2_depth().copy())
-                    self.api_socket.parse_l2_depth(instmt, item['data'])
-                    if instmt.get_l2_depth().is_diff(instmt.get_prev_l2_depth()):
-                        instmt.incr_order_book_id()
-                        self.insert_order_book(instmt)
-                elif re.search(r'ok_sub_futureusd_(.*)_trade_(.*)', item['channel']):
-                    trades = self.api_socket.parse_trade(instmt, item['data'])
-                    for trade in trades:
-                        if trade.trade_id != instmt.get_exch_trade_id():
-                            instmt.incr_trade_id()
-                            instmt.set_exch_trade_id(trade.trade_id)
-                            self.insert_trade(instmt, trade)
+        if 'type' in message:
+            if re.search('ticker\.(.*)', message['type']):
+                instmt.set_prev_l2_depth(instmt.get_l2_depth().copy())
+                self.api_socket.parse_l2_depth(instmt, message)
+                if instmt.get_l2_depth().is_diff(instmt.get_prev_l2_depth()):
+                    instmt.incr_order_book_id()
+                    self.insert_order_book(instmt)
+            if re.search('depth\.L20\.(.*)', message['type']):
+                instmt.set_prev_l2_depth(instmt.get_l2_depth().copy())
+                self.api_socket.parse_l2_depth(instmt, message)
+                if instmt.get_l2_depth().is_diff(instmt.get_prev_l2_depth()):
+                    instmt.incr_order_book_id()
+                    self.insert_order_book(instmt)
+            if re.search('trade\.(.*)', message['type']):
+                trades = self.api_socket.parse_trade(instmt, message)
+                for trade in trades:
+                    if trade.trade_id != instmt.get_exch_trade_id():
+                        instmt.incr_trade_id()
+                        instmt.set_exch_trade_id(trade.trade_id)
+                        self.insert_trade(instmt, trade)
+        # for item in message:
+        #     if 'channel' in item:
+        #         if re.search(r'ok_sub_futureusd_(.*)_depth_(.*)', item['channel']):
+        #             instmt.set_prev_l2_depth(instmt.get_l2_depth().copy())
+        #             self.api_socket.parse_l2_depth(instmt, item['data'])
+        #             if instmt.get_l2_depth().is_diff(instmt.get_prev_l2_depth()):
+        #                 instmt.incr_order_book_id()
+        #                 self.insert_order_book(instmt)
+        #         elif re.search(r'ok_sub_futureusd_(.*)_trade_(.*)', item['channel']):
+        #             trades = self.api_socket.parse_trade(instmt, item['data'])
+        #             for trade in trades:
+        #                 if trade.trade_id != instmt.get_exch_trade_id():
+        #                     instmt.incr_trade_id()
+        #                     instmt.set_exch_trade_id(trade.trade_id)
+        #                     self.insert_trade(instmt, trade)
 
     def start(self, instmt):
         """
