@@ -45,7 +45,7 @@ class ExchGwApiFcoinWs(WebSocketApiClient):
 
     @classmethod
     def get_trades_subscription_string(cls, instmt):
-        return json.dumps({"cmd": "sub", "args": ["depth.L20.%s" % instmt.instmt_code]})
+        return json.dumps({"cmd": "sub", "args": ["trade.L20.%s" % instmt.instmt_code]})
 
     @classmethod
     def parse_l2_depth(cls, instmt, raw):
