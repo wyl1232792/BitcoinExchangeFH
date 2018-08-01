@@ -244,19 +244,19 @@ class ExchGwFcoin(ExchangeGateway):
         }
         """
         if 'type' in message:
-            if re.search('ticker\.(.*)', message['type']):
+            # if message['type'] == "ticker.%s" % instmt.instmt_code:
+            #     instmt.set_prev_l2_depth(instmt.get_l2_depth().copy())
+            #     self.api_socket.parse_l2_depth(instmt, message)
+            #     if instmt.get_l2_depth().is_diff(instmt.get_prev_l2_depth()):
+            #         instmt.incr_order_book_id()
+            #         self.insert_order_book(instmt)
+            if message['type'] == "depth.L20.%s" % instmt.instmt_code:
                 instmt.set_prev_l2_depth(instmt.get_l2_depth().copy())
                 self.api_socket.parse_l2_depth(instmt, message)
                 if instmt.get_l2_depth().is_diff(instmt.get_prev_l2_depth()):
                     instmt.incr_order_book_id()
                     self.insert_order_book(instmt)
-            if re.search('depth\.L20\.(.*)', message['type']):
-                instmt.set_prev_l2_depth(instmt.get_l2_depth().copy())
-                self.api_socket.parse_l2_depth(instmt, message)
-                if instmt.get_l2_depth().is_diff(instmt.get_prev_l2_depth()):
-                    instmt.incr_order_book_id()
-                    self.insert_order_book(instmt)
-            if re.search('trade\.(.*)', message['type']):
+            if message['type'] == "trade.%s" % instmt.instmt_code:
                 trades = self.api_socket.parse_trade(instmt, message)
                 for trade in trades:
                     if trade.trade_id != instmt.get_exch_trade_id():
