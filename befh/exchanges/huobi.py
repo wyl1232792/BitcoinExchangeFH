@@ -201,21 +201,22 @@ class ExchGwHuoBi(ExchangeGateway):
             ts = message['ping']
             self.api_socket.send(json.dumps({'pong': ts}))
         elif 'ch' in message:
-            if 'trade.detail' in message['ch']:
+            if 'trade.detail' in message['ch'] and instmt.instmt_code in message['ch']:
                 trades = self.api_socket.parse_trade(instmt, message['tick']['data'])
                 for trade in trades:
                     if trade.trade_id != instmt.get_exch_trade_id():
                         instmt.incr_trade_id()
                         instmt.set_exch_trade_id(trade.trade_id)
                         self.insert_trade(instmt, trade)
-            elif 'depth.step' in message['ch']:
+            elif 'depth.step' in message['ch'] and instmt.instmt_code in message['ch']:
                 instmt.set_prev_l2_depth(instmt.get_l2_depth().copy())
                 self.api_socket.parse_l2_depth(instmt, message['tick'])
                 if instmt.get_l2_depth().is_diff(instmt.get_prev_l2_depth()):
                     instmt.incr_order_book_id()
                     self.insert_order_book(instmt)
             else:
-                Logger.error(self.__class__.__name__, 'Not Trade or Market')
+                pass
+                # Logger.error(self.__class__.__name__, 'Not Trade or Market')
 
     def start(self, instmt):
         """
