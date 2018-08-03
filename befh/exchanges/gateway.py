@@ -2,6 +2,7 @@
 from befh.clients.zmq import ZmqClient
 from befh.clients.csv import FileClient
 from befh.clients.mysql import MysqlClient
+from befh.clients.nanomsg_client import NanomsgClient
 from befh.clients.sqlite import SqliteClient
 from befh.market_data import L2Depth, Trade, Snapshot
 from datetime import datetime
@@ -60,7 +61,7 @@ class ExchangeGateway:
 
     @classmethod
     def is_allowed_instmt_record(cls, db_client):
-        return not isinstance(db_client, ZmqClient)
+        return not (isinstance(db_client, ZmqClient) or isinstance(db_client, NanomsgClient))
 
     @classmethod
     def init_snapshot_table(cls, db_clients):
@@ -121,7 +122,7 @@ class ExchangeGateway:
         if instmt.get_l2_depth() is not None:
             id = self.get_instmt_snapshot_id(instmt)
             for db_client in self.db_clients:
-                if self.is_allowed_snapshot(db_client):
+                if self.is_allowed_snapshot(db_client): # not csv ?
                     db_client.insert(table=self.get_snapshot_table_name(),
                                      columns=Snapshot.columns(),
                                      types=Snapshot.types(),
@@ -134,7 +135,7 @@ class ExchangeGateway:
                                      is_orreplace=True,
                                      is_commit=True)
 
-                if self.is_allowed_instmt_record(db_client):
+                if self.is_allowed_instmt_record(db_client): # not zmq ?
                     db_client.insert(table=instmt.get_instmt_snapshot_table_name(),
                                           columns=['id'] + Snapshot.columns(False),
                                           types=['int'] + Snapshot.types(False),
