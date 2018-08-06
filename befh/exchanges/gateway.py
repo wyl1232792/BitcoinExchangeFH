@@ -95,6 +95,9 @@ class ExchangeGateway:
                         else:
                             self.exch_snapshot_id = 0
 
+    def notify_all_added(self):
+        pass
+
     def start(self, instmt):
         """
         Start the exchange gateway

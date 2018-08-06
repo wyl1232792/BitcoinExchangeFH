@@ -26,6 +26,7 @@ from befh.exchanges.wex import ExchGwWex
 from befh.exchanges.bitflyer import ExchGwBitflyer
 from befh.exchanges.coinone import ExchGwCoinOne
 from befh.exchanges.fcoin import ExchGwFcoin
+from befh.exchanges.binance_ws import ExchGwBinanceWs
 from befh.clients.kdbplus import KdbPlusClient
 from befh.clients.mysql import MysqlClient
 from befh.clients.sqlite import SqliteClient
@@ -167,10 +168,12 @@ def main():
     exch_gws.append(ExchGwYunbi(db_clients))
     exch_gws.append(ExchGwLiqui(db_clients))
     exch_gws.append(ExchGwBinance(db_clients))
+    exch_gws.append(ExchGwBinanceWs(db_clients))
     exch_gws.append(ExchGwCryptopia(db_clients))
     exch_gws.append(ExchGwOkex(db_clients))
     exch_gws.append(ExchGwWex(db_clients))
     exch_gws.append(ExchGwFcoin(db_clients))
+    exch_gws.append(Ex(db_clients))
     threads = []
     for exch in exch_gws:
         for instmt in subscription_instmts:
@@ -178,6 +181,9 @@ def main():
                 Logger.info("[main]", "Starting instrument %s-%s..." % \
                     (instmt.get_exchange_name(), instmt.get_instmt_name()))
                 threads += exch.start(instmt)
+        exch.notify_all_added()
+
+
 
 if __name__ == '__main__':
     main()

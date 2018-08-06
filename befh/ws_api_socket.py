@@ -22,10 +22,24 @@ class WebSocketApiClient(ApiSocket):
         self._connecting = False
         self._connected = False
         self._received_data_compressed = received_data_compressed
+        self.link_holder = []
         self.on_message_handlers = []
         self.on_open_handlers = []
         self.on_close_handlers = []
         self.on_error_handlers = []
+
+    def connect_collect(self):
+        if not self._connecting and not self._connected:
+            if (len(self.link_holder) == 0):
+                return
+            self._connecting = True
+            self.ws = websocket.WebSocketApp(self.link_holder[0][0] + self.link_holder[0][2].join([i[1] for i in self.link_holder]),
+                                                 on_message=self.__on_message,
+                                                 on_close=self.__on_close,
+                                                 on_open=self.__on_open,
+                                                 on_error=self.__on_error)
+            self.wst = threading.Thread(target=lambda: self.__start(reconnect_interval=reconnect_interval))
+            self.wst.start()
 
     def connect(self, url,
                 on_message_handler=None,
@@ -57,14 +71,17 @@ class WebSocketApiClient(ApiSocket):
             self.on_error_handlers.append(on_error_handler)
 
         if not self._connecting and not self._connected:
-            self._connecting = True
-            self.ws = websocket.WebSocketApp(url,
-                                             on_message=self.__on_message,
-                                             on_close=self.__on_close,
-                                             on_open=self.__on_open,
-                                             on_error=self.__on_error)
-            self.wst = threading.Thread(target=lambda: self.__start(reconnect_interval=reconnect_interval))
-            self.wst.start()
+            if (isinstance(url, list)):
+                self.link_holder.append(url)
+            else:
+                self._connecting = True
+                self.ws = websocket.WebSocketApp(url,
+                                                 on_message=self.__on_message,
+                                                 on_close=self.__on_close,
+                                                 on_open=self.__on_open,
+                                                 on_error=self.__on_error)
+                self.wst = threading.Thread(target=lambda: self.__start(reconnect_interval=reconnect_interval))
+                self.wst.start()
 
         return self.wst
 
