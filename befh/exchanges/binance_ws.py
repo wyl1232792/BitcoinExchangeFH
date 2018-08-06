@@ -26,6 +26,11 @@ class ExchGwApiBinanceWs(WebSocketApiClient):
         Constructor
         """
         WebSocketApiClient.__init__(self, 'ExchApiBinanceWs')
+        self.exch_ts = 0
+
+    @classmethod
+    def get_order_book_timestamp_field_name(cls):
+        return 'date'
 
     @classmethod
     def get_bids_field_name(cls):
@@ -36,11 +41,31 @@ class ExchGwApiBinanceWs(WebSocketApiClient):
         return 'asks'
 
     @classmethod
+    def get_trades_timestamp_field_name(cls):
+        return 'T'
+
+    @classmethod
+    def get_trade_side_field_name(cls):
+        return 'type'
+
+    @classmethod
+    def get_trade_id_field_name(cls):
+        return 'a'
+
+    @classmethod
+    def get_trade_price_field_name(cls):
+        return 'p'
+
+    @classmethod
+    def get_trade_volume_field_name(cls):
+        return 'q'
+
+    @classmethod
     def get_link(cls, instmt=None):
         if instmt is None:
             return 'wss://stream.binance.com:9443/stream?streams='
         else:
-            return ['wss://stream.binance.com:9443/stream?streams=', '%s@depth5/%s@trade' % (instmt.instmt_code, instmt.instmt_code), '/']
+            return ['wss://stream.binance.com:9443/stream?streams=', '%s@depth5/%s@trade/%s@depth' % (instmt.instmt_code, instmt.instmt_code, instmt.instmt_code), '/']
 
     @classmethod
     def get_order_book_subscription_string(cls, instmt):
@@ -49,6 +74,9 @@ class ExchGwApiBinanceWs(WebSocketApiClient):
     @classmethod
     def get_trades_subscription_string(cls, instmt):
         return '%s@trade' % instmt.instmt_code
+
+    def update_exch_ts(self, t):
+        self.exch_ts = t
 
     @classmethod
     def parse_l2_depth(cls, instmt, raw):
@@ -83,24 +111,22 @@ class ExchGwApiBinanceWs(WebSocketApiClient):
         }
         """
         l2_depth = instmt.get_l2_depth()
-        keys = list(raw.keys())
 
         # if raw['type'].startswith('ticker'):
         #     pass
-        if raw['type'].startswith('depth'):
-            timestamp = raw['ts']
-            l2_depth.date_time = datetime.utcfromtimestamp(timestamp / 1000.0).strftime("%Y%m%d %H:%M:%S.%f")
-            depth = 5
-            bids = raw['bids']
-            asks = raw['asks']
-            bids_len = min(len(bids) / 2, depth)
-            asks_len = min(len(asks) / 2, depth)
-            for i in range(bids_len):
-                l2_depth.bids[i].price = float(bids[i * 2])
-                l2_depth.bids[i].volume = float(bids[i * 2 + 1])
-            for i in range(asks_len):
-                l2_depth.asks[i].price = float(asks[i * 2])
-                l2_depth.asks[i].volume = float(asks[i * 2 + 1])
+        timestamp = self.exch_ts
+        l2_depth.date_time = datetime.utcfromtimestamp(timestamp / 1000.0).strftime("%Y%m%d %H:%M:%S.%f")
+        depth = 5
+        bids = raw['bids']
+        asks = raw['asks']
+        bids_len = min(len(bids), depth)
+        asks_len = min(len(asks), depth)
+        for i in range(bids_len):
+            l2_depth.bids[i].price = float(bids[i][0])
+            l2_depth.bids[i].volume = float(bids[i][1])
+        for i in range(asks_len):
+            l2_depth.asks[i].price = float(asks[i][0])
+            l2_depth.asks[i].volume = float(asks[i][1])
 
         return l2_depth
 
@@ -123,18 +149,19 @@ class ExchGwApiBinanceWs(WebSocketApiClient):
         """
         trades = []
 
+        raws = raws['data']
         trade = Trade()
-        trade.date_time = datetime.utcfromtimestamp(raws['ts'] / 1000.0).strftime("%Y%m%d %H:%M:%S.%f")
+        trade.date_time = datetime.utcfromtimestamp(raws['E'] / 1000.0).strftime("%Y%m%d %H:%M:%S.%f")
         # Trade side
         # Buy = 0
         # Side = 1
-        trade.trade_side = Trade.Side.BUY if raws['side'] == 'buy' else Trade.Side.SELL
+        trade.trade_side = Trade.Side.BUY if raws['m'] else Trade.Side.SELL
         # Trade id
-        trade.trade_id = str(raws['id'])
+        trade.trade_id = str(raws['t'])
         # Trade price
-        trade.trade_price = raws['price']
+        trade.trade_price = raws['p']
         # Trade volume
-        trade.trade_volume = raws['amount']
+        trade.trade_volume = raws['q']
         trades.append(trade)
 
         # for item in raws:
@@ -250,21 +277,22 @@ class ExchGwBinanceWs(ExchangeGateway):
           "price":4.000000000
         }
         """
-        print(json.dumps(message))
-        if 'type' in message:
+        if 'stream' in message:
             # if message['type'] == "ticker.%s" % instmt.instmt_code:
             #     instmt.set_prev_l2_depth(instmt.get_l2_depth().copy())
             #     self.api_socket.parse_l2_depth(instmt, message)
             #     if instmt.get_l2_depth().is_diff(instmt.get_prev_l2_depth()):
             #         instmt.incr_order_book_id()
             #         self.insert_order_book(instmt)
-            if message['type'] == "depth.L20.%s" % instmt.instmt_code:
+            if message['stream'] == "%s@depth" % instmt.instmt_code:
+                self.api_socket.update_exch_ts(message['data']['E'])
+            if message['stream'] == "%s@depth5" % instmt.instmt_code:
                 instmt.set_prev_l2_depth(instmt.get_l2_depth().copy())
                 self.api_socket.parse_l2_depth(instmt, message)
                 if instmt.get_l2_depth().is_diff(instmt.get_prev_l2_depth()):
                     instmt.incr_order_book_id()
                     self.insert_order_book(instmt)
-            if message['type'] == "trade.%s" % instmt.instmt_code:
+            if message['stream'] == "%s@trade" % instmt.instmt_code:
                 trades = self.api_socket.parse_trade(instmt, message)
                 for trade in trades:
                     if trade.trade_id != instmt.get_exch_trade_id():
