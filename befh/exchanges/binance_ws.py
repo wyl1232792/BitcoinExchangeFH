@@ -40,7 +40,7 @@ class ExchGwApiBinanceWs(WebSocketApiClient):
         if instmt is None:
             return 'wss://stream.binance.com:9443/stream?streams='
         else:
-            return ['wss://stream.binance.com:9443/stream?streams=', instmt.instmt_code, '/']
+            return ['wss://stream.binance.com:9443/stream?streams=', '%s@depth5/%s@trade' % (instmt.instmt_code, instmt.instmt_code), '/']
 
     @classmethod
     def get_order_book_subscription_string(cls, instmt):
@@ -250,6 +250,7 @@ class ExchGwBinanceWs(ExchangeGateway):
           "price":4.000000000
         }
         """
+        print(json.dumps(message))
         if 'type' in message:
             # if message['type'] == "ticker.%s" % instmt.instmt_code:
             #     instmt.set_prev_l2_depth(instmt.get_l2_depth().copy())

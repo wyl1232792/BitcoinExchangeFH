@@ -173,7 +173,6 @@ def main():
     exch_gws.append(ExchGwOkex(db_clients))
     exch_gws.append(ExchGwWex(db_clients))
     exch_gws.append(ExchGwFcoin(db_clients))
-    exch_gws.append(Ex(db_clients))
     threads = []
     for exch in exch_gws:
         for instmt in subscription_instmts:

@@ -33,12 +33,13 @@ class WebSocketApiClient(ApiSocket):
             if (len(self.link_holder) == 0):
                 return
             self._connecting = True
+            print(self.link_holder[0][0] + self.link_holder[0][2].join([i[1] for i in self.link_holder]))
             self.ws = websocket.WebSocketApp(self.link_holder[0][0] + self.link_holder[0][2].join([i[1] for i in self.link_holder]),
                                                  on_message=self.__on_message,
                                                  on_close=self.__on_close,
                                                  on_open=self.__on_open,
                                                  on_error=self.__on_error)
-            self.wst = threading.Thread(target=lambda: self.__start(reconnect_interval=reconnect_interval))
+            self.wst = threading.Thread(target=lambda: self.__start(reconnect_interval=2))
             self.wst.start()
 
     def connect(self, url,
