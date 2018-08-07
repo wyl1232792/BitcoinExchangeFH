@@ -76,10 +76,10 @@ class ExchGwApiBinanceWs(WebSocketApiClient):
         return '%s@trade' % instmt.instmt_code
 
     def update_exch_ts(self, t):
+#        print(t)
         self.exch_ts = t
 
-    @classmethod
-    def parse_l2_depth(cls, instmt, raw):
+    def parse_l2_depth(self, instmt, raw):
         """
         Parse raw data to L2 depth
         :param instmt: Instrument
@@ -112,6 +112,7 @@ class ExchGwApiBinanceWs(WebSocketApiClient):
         """
         l2_depth = instmt.get_l2_depth()
 
+        #print(json.dumps(raw))
         # if raw['type'].startswith('ticker'):
         #     pass
         timestamp = self.exch_ts
@@ -288,7 +289,7 @@ class ExchGwBinanceWs(ExchangeGateway):
                 self.api_socket.update_exch_ts(message['data']['E'])
             if message['stream'] == "%s@depth5" % instmt.instmt_code:
                 instmt.set_prev_l2_depth(instmt.get_l2_depth().copy())
-                self.api_socket.parse_l2_depth(instmt, message)
+                self.api_socket.parse_l2_depth(instmt, message['data'])
                 if instmt.get_l2_depth().is_diff(instmt.get_prev_l2_depth()):
                     instmt.incr_order_book_id()
                     self.insert_order_book(instmt)
