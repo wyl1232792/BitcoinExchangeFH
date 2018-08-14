@@ -118,8 +118,9 @@ class ExchangeGateway:
         :param instmt: Instrument
         """
         # If local timestamp indicator is on, assign the local timestamp again
-        if self.is_local_timestamp:
-            instmt.get_l2_depth().date_time += '<->' + datetime.utcnow().strftime("%Y%m%d %H:%M:%S.%f")
+        # if self.is_local_timestamp:
+        #     instmt.get_l2_depth().date_time += '<->' + datetime.utcnow().strftime("%Y%m%d %H:%M:%S.%f")
+        instmt.get_l2_depth().date_time = int(datetime.strptime(instmt.get_l2_depth().date_time, "%Y%m%d %H:%M:%S.%f") * 1000000000)
 
         # Update the snapshot
         if instmt.get_l2_depth() is not None:
@@ -164,8 +165,9 @@ class ExchangeGateway:
         if date_time != self.date_time:
             self.date_time = date_time
             self.init_instmt_snapshot_table(instmt)
-        if self.is_local_timestamp:
-            trade.date_time += '<->' + datetime.utcnow().strftime("%Y%m%d %H:%M:%S.%f")
+        # if self.is_local_timestamp:
+        #     trade.date_time += '<->' + datetime.utcnow().strftime("%Y%m%d %H:%M:%S.%f")
+        trade.date_time = int(datetime.strptime(trade.date_tim, "%Y%m%d %H:%M:%S.%f") * 1000000000)
 
 
         # Set the last trade to the current one
@@ -176,7 +178,7 @@ class ExchangeGateway:
            instmt.get_last_trade() is not None:
             id = self.get_instmt_snapshot_id(instmt)
             for db_client in self.db_clients:
-                is_allowed_snapshot = self.is_allowed_snapshot(db_client)
+                is_allowed_snapshot = self.is_allowed_snapshot(db_client)e
                 is_allowed_instmt_record = self.is_allowed_instmt_record(db_client)
                 if is_allowed_snapshot:
                     db_client.insert(table=self.get_snapshot_table_name(),
