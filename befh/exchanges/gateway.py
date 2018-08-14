@@ -121,7 +121,7 @@ class ExchangeGateway:
         # if self.is_local_timestamp:
         #     instmt.get_l2_depth().date_time += '<->' + datetime.utcnow().strftime("%Y%m%d %H:%M:%S.%f")
         instmt.get_l2_depth().date_time = int(datetime.strptime(instmt.get_l2_depth().date_time, "%Y%m%d %H:%M:%S.%f").timestamp() * 1000000000)
-        print('a')
+
         # Update the snapshot
         if instmt.get_l2_depth() is not None:
             id = self.get_instmt_snapshot_id(instmt)
@@ -154,7 +154,7 @@ class ExchangeGateway:
     def insert_trade(self, instmt, trade):
         """
         Insert trade row into the database client
-        :param instmt: Instrument
+        :param instmt: Instrumente
         """
         # If the instrument is not recovered, skip inserting into the table
         if not instmt.get_recovered():
@@ -168,7 +168,6 @@ class ExchangeGateway:
         # if self.is_local_timestamp:
         #     trade.date_time += '<->' + datetime.utcnow().strftime("%Y%m%d %H:%M:%S.%f")
         trade.date_time = int(datetime.strptime(trade.date_time, "%Y%m%d %H:%M:%S.%f").timestamp() * 1000000000)
-        print('b')
 
         # Set the last trade to the current one
         instmt.set_last_trade(trade)
