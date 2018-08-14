@@ -120,7 +120,7 @@ class ExchangeGateway:
         # If local timestamp indicator is on, assign the local timestamp again
         # if self.is_local_timestamp:
         #     instmt.get_l2_depth().date_time += '<->' + datetime.utcnow().strftime("%Y%m%d %H:%M:%S.%f")
-        instmt.get_l2_depth().date_time = int(datetime.strptime(instmt.get_l2_depth().date_time, "%Y%m%d %H:%M:%S.%f") * 1000000000)
+        instmt.get_l2_depth().date_time = int(datetime.strptime(instmt.get_l2_depth().date_time, "%Y%m%d %H:%M:%S.%f").timestamp() * 1000000000)
 
         # Update the snapshot
         if instmt.get_l2_depth() is not None:
@@ -167,7 +167,7 @@ class ExchangeGateway:
             self.init_instmt_snapshot_table(instmt)
         # if self.is_local_timestamp:
         #     trade.date_time += '<->' + datetime.utcnow().strftime("%Y%m%d %H:%M:%S.%f")
-        trade.date_time = int(datetime.strptime(trade.date_time, "%Y%m%d %H:%M:%S.%f") * 1000000000)
+        trade.date_time = int(datetime.strptime(trade.date_time, "%Y%m%d %H:%M:%S.%f").timestamp() * 1000000000)
 
 
         # Set the last trade to the current one
