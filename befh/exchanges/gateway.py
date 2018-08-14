@@ -154,7 +154,7 @@ class ExchangeGateway:
     def insert_trade(self, instmt, trade):
         """
         Insert trade row into the database client
-        :param instmt: Instrument
+        :param instmt: Instrumente
         """
         # If the instrument is not recovered, skip inserting into the table
         if not instmt.get_recovered():
@@ -167,7 +167,7 @@ class ExchangeGateway:
             self.init_instmt_snapshot_table(instmt)
         # if self.is_local_timestamp:
         #     trade.date_time += '<->' + datetime.utcnow().strftime("%Y%m%d %H:%M:%S.%f")
-        trade.date_time = int(datetime.strptime(trade.date_tim, "%Y%m%d %H:%M:%S.%f") * 1000000000)
+        trade.date_time = int(datetime.strptime(trade.date_time, "%Y%m%d %H:%M:%S.%f") * 1000000000)
 
 
         # Set the last trade to the current one
