@@ -178,7 +178,7 @@ class ExchangeGateway:
            instmt.get_last_trade() is not None:
             id = self.get_instmt_snapshot_id(instmt)
             for db_client in self.db_clients:
-                is_allowed_snapshot = self.is_allowed_snapshot(db_client)e
+                is_allowed_snapshot = self.is_allowed_snapshot(db_client)
                 is_allowed_instmt_record = self.is_allowed_instmt_record(db_client)
                 if is_allowed_snapshot:
                     db_client.insert(table=self.get_snapshot_table_name(),
