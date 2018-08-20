@@ -25,9 +25,9 @@ class TraderManager:
         if msg.HasField('register'):
             mapping = msg.register.mappingType
             print('register')
-            print('ref=' % msg.ref)
-            print('client=' % msg.client)
-            print('name=' % msg.register.name)
+            print('ref=%d' % msg.ref)
+            print('client=%d' % msg.client)
+            print('name=%s' % msg.register.name)
             print('mappingType=' + mapping)
 
             # register client and bind trader
@@ -42,7 +42,7 @@ class TraderManager:
                 else:
                     # create client
                     nc = Client(self, msg.client, msg.ref)
-                    
+
                     # bind trader
 
                 # ack success
