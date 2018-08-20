@@ -1,9 +1,41 @@
 
+from befh.traders.base_trader import BaseTrader
+import bitmex
 
-from befh.traders.ws_trader import WebsocketTrader
+class BitmexTrader(BaseTrader):
 
-class BitmexTrader(WebsocketTrader):
-
+    def __init__(self, config):
+        super().__init__()
+        self.auth_data = {}
+        self.set_alias_name(config['name'])
+        self.test = config['test']
+        self.auth_data['api_key'] = config['api_key']
+        self.auth_data['api_secret'] = config['api_secret']
+        self.default_instr = config['default_instr'] if 'default_instr' in config.keys else None
 
     def get_name(self):
         return 'bitmex'
+
+    def connect(self):
+        super().connect()
+        self.client = bitmex.bitmex(test=self.test, api_key=self.auth_data['api_key'], api_secret=self.auth_data['api_secret'])
+        print(self.client.Position_get().result())
+
+    def get_auth_data(self):
+        return self.auth_data
+
+    def submit_order(self):
+        super().submit_order()
+
+    def cancel_order(self):
+        super().cancel_order()
+
+    def get_balance(self):
+        super().get_balance()
+
+    def get_pnl(self):
+        super().get_pnl()
+
+    def get_host_link(self):
+        super().get_host_link()
+

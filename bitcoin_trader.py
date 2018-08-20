@@ -1,10 +1,13 @@
 import befh.bitcoin_trade_pb2 as proto
 import befh.nanomsg_conn as nnconn
 from befh.traders.trade_manager import TraderManager
-
+import json
+import sys
 # test
 
 def main():
+    accounts_path = './accounts.json'
+
     m = proto.RequestMsg()
 
     conn = nnconn.NanomsgConn("pull")
@@ -17,6 +20,15 @@ def main():
 
     manager = TraderManager(connSink)
     # preload accounts from config file
+    try:
+        f = open(accounts_path, 'r')
+        traders_preload = json.load(f)
+        print('Preload %d accounts\n' % len(traders_preload))
+        f.close()
+
+        manager.init_traders(traders_preload)
+    except FileNotFoundError:
+        pass
 
     print('Start listening')
     # listen msg from nanomsg
