@@ -17,7 +17,7 @@ class TraderManager:
 
     def init_traders(self, config):
         for client in config:
-             self.traders[client['name']] = __traders__[client['name']](config)
+             self.traders[client['name']] = __traders__[client['api']](config)
         pass
 
     def new_trader(self, config):
