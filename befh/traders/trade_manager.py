@@ -3,8 +3,9 @@ from befh.traders.client_context import Client, Account
 import befh.bitcoin_trade_pb2 as proto
 
 from befh.traders.bitmex_trader import BitmexTrader
-
+from befh.traders.sim_trader import SimTrader
 __traders__ = {
+    'sim': SimTrader,
     'bitmex': BitmexTrader
 }
 
