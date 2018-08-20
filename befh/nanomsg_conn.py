@@ -4,6 +4,7 @@ import re
 import nanomsg
 import json
 import time
+import threading
 
 class NanomsgConn:
 
@@ -17,19 +18,31 @@ class NanomsgConn:
         }
 
         self.conn = nanomsg.Socket(mapping[mode])
+        self.run_flag = False
         pass
 
     def connect(self, addr):
         self.conn.connect(addr=addr)
 
     def bind(self, addr):
-        self.conn.bind(addr=addr)
+        self.conn.bind(addr)
 
     def send(self, buff):
         self.conn.send(buff)
 
     def recv(self):
         return self.conn.recv()
+
+    def start(self):
+        self.run_flag = True
+
+    def stop(self):
+        self.run_flag = False
+
+    def recv_iter(self):
+        while self.run_flag:
+            yield self.conn.recv()
+
         
 
 

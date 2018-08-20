@@ -1,17 +1,26 @@
 import befh.bitcoin_trade_pb2 as proto
 import befh.nanomsg_conn as nnconn
+from befh.traders.trade_manager import TraderManager
 
 # test
 
-m = proto.RequestMsg()
+def main():
+    m = proto.RequestMsg()
 
-conn = nnconn.NanomsgConn("pull")
-conn.bind("ipc:///tmp/")
+    conn = nnconn.NanomsgConn("pull")
+    conn.bind("ipc:///tmp/trade_request.ipc")
+    conn.start()
 
-while True:
-    print("listen")
-    b = conn.recv()
-    m.ParseFromString(b)
-
+    manager = TraderManager()
+    # preload accounts from config file
 
 
+    print('Start listening')
+    # listen msg from nanomsg
+    for buffer in conn.recv_iter():
+        m.ParseFromString(buffer)
+        manager.handleMsg(m)
+
+
+if __name__ == '__main__':
+    main()
