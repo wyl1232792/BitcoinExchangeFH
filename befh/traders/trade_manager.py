@@ -2,14 +2,22 @@ import befh.traders.base_trader
 from befh.traders.client_context import Client, Account
 import befh.bitcoin_trade_pb2 as proto
 
+from befh.traders.bitmex_trader import BitmexTrader
+
+__traders__ = {
+    'bitmex': BitmexTrader
+}
+
 class TraderManager:
 
     def __init__(self, pubSink):
         self.clients = {}
-        self.traders = []
+        self.traders = {}
         self.pubSink = pubSink
 
     def init_traders(self, config):
+        for client in config:
+             self.traders[client['name']] = __traders__[client['name']](config)
         pass
 
     def new_trader(self, config):

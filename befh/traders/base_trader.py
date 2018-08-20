@@ -4,7 +4,9 @@ class BaseTrader():
 
 
     def __init__(self):
-        self.alias_name = 'unnamed'
+        if self.alias_name is None:
+            self.alias_name = 'unnamed'
+        print('New trader [api=%s, name=%s]', self.get_alias_name(), self.get_name())
         pass
 
     def connect(self):

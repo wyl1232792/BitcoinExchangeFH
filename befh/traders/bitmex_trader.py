@@ -5,13 +5,14 @@ import bitmex
 class BitmexTrader(BaseTrader):
 
     def __init__(self, config):
-        super().__init__()
         self.auth_data = {}
         self.set_alias_name(config['name'])
         self.test = config['test']
         self.auth_data['api_key'] = config['api_key']
         self.auth_data['api_secret'] = config['api_secret']
         self.default_instr = config['default_instr'] if 'default_instr' in config.keys else None
+        self.connect()
+        super().__init__()
 
     def get_name(self):
         return 'bitmex'
