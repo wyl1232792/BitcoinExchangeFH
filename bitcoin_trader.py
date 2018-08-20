@@ -11,9 +11,12 @@ def main():
     conn.bind("ipc:///tmp/trade_request.ipc")
     conn.start()
 
-    manager = TraderManager()
-    # preload accounts from config file
+    connSink = nnconn.NanomsgConn("pub")
+    connSink.bind("ipc:///tmp/trade_feed.ipc")
+    connSink.start()
 
+    manager = TraderManager(connSink)
+    # preload accounts from config file
 
     print('Start listening')
     # listen msg from nanomsg
