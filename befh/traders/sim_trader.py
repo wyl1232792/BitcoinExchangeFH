@@ -1,10 +1,11 @@
 
 from befh.traders.base_trader import BaseTrader
-
+import json
 class SimTrader(BaseTrader):
 
     def __init__(self, config):
         self.auth_data = {}
+
         self.set_alias_name(config['name'])
         super().__init__()
 

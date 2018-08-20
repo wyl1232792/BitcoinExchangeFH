@@ -1,7 +1,7 @@
 import befh.traders.base_trader
 from befh.traders.client_context import Client, Account
 import befh.bitcoin_trade_pb2 as proto
-
+import json
 from befh.traders.bitmex_trader import BitmexTrader
 from befh.traders.sim_trader import SimTrader
 __traders__ = {
@@ -18,7 +18,7 @@ class TraderManager:
 
     def init_traders(self, config):
         for client in config:
-             self.traders[client['name']] = __traders__[client['api']](config)
+            self.traders[client['name']] = __traders__[client['api']](client)
         pass
 
     def new_trader(self, config):

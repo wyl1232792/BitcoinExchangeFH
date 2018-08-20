@@ -1,7 +1,7 @@
 
 from befh.traders.base_trader import BaseTrader
 import bitmex
-
+import json
 class BitmexTrader(BaseTrader):
 
     def __init__(self, config):
@@ -10,7 +10,7 @@ class BitmexTrader(BaseTrader):
         self.test = config['test']
         self.auth_data['api_key'] = config['api_key']
         self.auth_data['api_secret'] = config['api_secret']
-        self.default_instr = config['default_instr'] if 'default_instr' in config.keys else None
+        self.default_instr = config['default_instr'] if 'default_instr' in config.keys() else None
         self.connect()
         super().__init__()
 
@@ -20,7 +20,7 @@ class BitmexTrader(BaseTrader):
     def connect(self):
         super().connect()
         self.client = bitmex.bitmex(test=self.test, api_key=self.auth_data['api_key'], api_secret=self.auth_data['api_secret'])
-        print(self.client.Position_get().result())
+        print(self.client.Position.Position_get().result())
 
     def get_auth_data(self):
         return self.auth_data

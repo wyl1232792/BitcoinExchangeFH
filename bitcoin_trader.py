@@ -1,5 +1,5 @@
 import befh.bitcoin_trade_pb2 as proto
-import befh.nanomsg_conn as nnconn
+# import befh.nanomsg_conn as nnconn
 from befh.traders.trade_manager import TraderManager
 import json
 import sys
@@ -10,15 +10,16 @@ def main():
 
     m = proto.RequestMsg()
 
-    conn = nnconn.NanomsgConn("pull")
-    conn.bind("ipc:///tmp/trade_request.ipc")
-    conn.start()
+    # conn = nnconn.NanomsgConn("pull")
+    # conn.bind("ipc:///tmp/trade_request.ipc")
+    # conn.start()
+    #
+    # connSink = nnconn.NanomsgConn("pub")
+    # connSink.bind("ipc:///tmp/trade_feed.ipc")
+    # connSink.start()
 
-    connSink = nnconn.NanomsgConn("pub")
-    connSink.bind("ipc:///tmp/trade_feed.ipc")
-    connSink.start()
-
-    manager = TraderManager(connSink)
+    # manager = TraderManager(connSink)
+    manager = TraderManager(None)
     # preload accounts from config file
     try:
         f = open(accounts_path, 'r')

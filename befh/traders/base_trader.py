@@ -34,7 +34,7 @@ class BaseTrader():
         return ''
 
     def get_alias_name(self):
-        return self.get_alias_name()
+        return self.alias_name
 
     def set_alias_name(self, name):
         self.alias_name = name
