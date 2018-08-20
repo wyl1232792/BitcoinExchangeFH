@@ -49,8 +49,8 @@ class TraderManager:
                 ack = proto.NotifyMsg()
                 ack.client = msg.client
                 ack.ref = msg.ref
-                ack.status = proto.Status()
                 ack.status.code = proto.SUCCESS
+                ack.status.msg = ''
 
                 self.pub(ack)
 
