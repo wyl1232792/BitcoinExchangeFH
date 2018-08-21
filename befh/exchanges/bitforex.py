@@ -184,7 +184,7 @@ class ExchGwBitforex(ExchangeGateway):
         if 'event' in keys:
             if message['param']['businessType'] == instmt.get_instmt_code():
                 if message['event'] == 'depth10':
-                    instmt.set_prev_l2_depth(instmt.get_l2_depth().copy)
+                    instmt.set_prev_l2_depth(instmt.get_l2_depth().copy())
                     l2_depth = self.api_socket.parse_l2_depth(instmt, message)
                     if l2_depth is not None and l2_depth.is_diff(instmt.get_prev_l2_depth()):
                         instmt.set_l2_depth(l2_depth)
