@@ -11,7 +11,7 @@ from functools import partial
 from datetime import datetime
 
 
-class ExchGwBitforex(WebSocketApiClient):
+class ExchBitforex(WebSocketApiClient):
     """
     Exchange socket
     """
@@ -59,11 +59,11 @@ class ExchGwBitforex(WebSocketApiClient):
 
     @classmethod
     def get_order_book_subscription_string(cls, instmt):
-        return '[{"type": "subHq", "event": "depth10", "param": {"businessType": "%s", "dType":0, "size": 100}}]' % instmt.get_instmt_code
+        return '[{"type": "subHq", "event": "depth10", "param": {"businessType": "%s", "dType":0, "size": 100}}]' % instmt.get_instmt_code()
 
     @classmethod
     def get_trades_subscription_string(cls, instmt):
-        return '[{"type": "subHq", "event": "trade", "param": {"businessType": "%s", "dType":0, "size": 100}}]' % instmt.get_instmt_code
+        return '[{"type": "subHq", "event": "trade", "param": {"businessType": "%s", "dType":0, "size": 100}}]' % instmt.get_instmt_code()
 
     @classmethod
     def parse_l2_depth(cls, instmt, raw):
@@ -86,11 +86,11 @@ class ExchGwBitforex(WebSocketApiClient):
             bids_len = min(len(bids), depth)
             asks_len = min(len(asks), depth)
             for i in range(bids_len):
-                l2_depth.bids[i].price = float(bids['price'])
-                l2_depth.bids[i].volume = float(bids['amount'])
+                l2_depth.bids[i].price = float(bids[i]['price'])
+                l2_depth.bids[i].volume = float(bids[i]['amount'])
             for i in range(asks_len):
-                l2_depth.asks[i].price = float(asks['price'])
-                l2_depth.asks[i].volume = float(asks['amount'])
+                l2_depth.asks[i].price = float(asks[i]['price'])
+                l2_depth.asks[i].volume = float(asks[i]['amount'])
 
         return l2_depth
 
@@ -141,7 +141,7 @@ class ExchGwBitforex(ExchangeGateway):
         Constructor
         :param db_client: Database client
         """
-        ExchangeGateway.__init__(self, ExchGwBitforex(), db_clients)
+        ExchangeGateway.__init__(self, ExchBitforex(), db_clients)
 
     @classmethod
     def get_exchange_name(cls):
@@ -186,6 +186,7 @@ class ExchGwBitforex(ExchangeGateway):
                 if message['event'] == 'depth10':
                     l2_depth = self.api_socket.parse_l2_depth(instmt, message)
                     if l2_depth is not None and l2_depth.is_diff(instmt.get_l2_depth()):
+                        print ('haha')
                         instmt.set_prev_l2_depth(instmt.get_l2_depth())
                         instmt.set_l2_depth(l2_depth)
                         instmt.incr_order_book_id()
