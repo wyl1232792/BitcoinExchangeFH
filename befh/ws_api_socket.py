@@ -94,7 +94,19 @@ class WebSocketApiClient(ApiSocket):
         """
         self.ws.send(msg)
 
+    def get_ping_msg(self):
+        return None
+
+    def send_interval_ping_msg(self):
+        while True:
+            time.sleep(10)
+            self.ws.send(self.get_ping_msg())
+
     def __start(self, reconnect_interval=10):
+
+        if self.get_ping_msg() is not None:
+            self.ping_thread = threading.Thread(target=self.send_interval_ping_msg)
+
         while True:
             self.ws.run_forever()
             Logger.info(self.__class__.__name__, "Socket <%s> is going to reconnect..." % self.id)

@@ -65,6 +65,10 @@ class ExchBitforex(WebSocketApiClient):
     def get_trades_subscription_string(cls, instmt):
         return '[{"type": "subHq", "event": "trade", "param": {"businessType": "%s", "dType":0, "size": 100}}]' % instmt.get_instmt_code()
 
+    def get_ping_msg(self):
+        print('send ping')
+        return 'ping_p'
+
     @classmethod
     def parse_l2_depth(cls, instmt, raw):
         """
