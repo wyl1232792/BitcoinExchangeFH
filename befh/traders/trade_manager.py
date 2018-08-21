@@ -4,10 +4,17 @@ import befh.bitcoin_trade_pb2 as proto
 import json
 from befh.traders.bitmex_trader import BitmexTrader
 from befh.traders.sim_trader import SimTrader
+
 __traders__ = {
     'sim': SimTrader,
     'bitmex': BitmexTrader
 }
+
+class SimpleTraderProvider:
+    def __init__(self, t):
+        self.trader = t
+    def get(self):
+        return self.trader
 
 class TraderManager:
 
@@ -30,6 +37,13 @@ class TraderManager:
     def pause(self):
         pass
 
+    @classmethod
+    def produce_mapping_config(cls, msg):
+        return {
+            'name': msg.register.name,
+            'mapping': msg.register.mappingType
+        }
+
     def handleMsg(self, msg):
         if msg.HasField('register'):
             mapping = msg.register.mappingType
@@ -49,10 +63,25 @@ class TraderManager:
                         # do nothing but send msg
                         pass
                 else:
-                    # create client
-                    nc = Client(self, msg.client, msg.ref)
+                    # get trader
+                    if (msg.register.name not in self.traders.keys()):
+                        # not found
+                        ack = proto.NotifyMsg()
+                        ack.client = msg.client
+                        ack.ref = msg.ref
+                        ack.status.code = proto.INVALID_REQUEST
+                        ack.status.msg = 'name not found'
+                        self.pub(ack)
+                        return
 
-                    # bind trader
+                    trader = self.traders[msg.register.name]
+                    # create client
+                    _account = trader.get_account(self.produce_mapping_config(msg))
+                    nc = Client(self, msg.client, _account, msg.ref)
+                    self.clients[msg.ref] = nc
+                    nc.set_trader_provider(SimpleTraderProvider(trader))
+                    # bind client to trader
+                    trader.add_client(nc)
 
                 # ack success
                 ack = proto.NotifyMsg()
@@ -63,8 +92,10 @@ class TraderManager:
 
                 self.pub(ack)
 
-        elif msg.HasField('submit'):
+            else:
+                print('error')
 
+        elif msg.HasField('submit'):
             print('s')
 
         elif msg.HasField('cancel'):
