@@ -76,6 +76,7 @@ class ExchGwApiOkexWs(WebSocketApiClient):
             asks = raw[cls.get_asks_field_name()]
             asks_len = min(l2_depth.depth, len(asks))
             for i in range(0, asks_len):
+                i = -i - 1 # it is very special
                 l2_depth.asks[i].price = float(asks[i][0]) if type(asks[i][0]) != float else asks[i][0]
                 l2_depth.asks[i].volume = float(asks[i][1]) if type(asks[i][1]) != float else asks[i][1]
         else:
