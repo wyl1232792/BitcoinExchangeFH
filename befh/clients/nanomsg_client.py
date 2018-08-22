@@ -25,6 +25,7 @@ class FileWriter:
         if (self.size > self.max_size):
             self.roll()
         self.fd.write(buff + '\n')
+        print(self.fd)
         self.size += len(buff)+ 1
 
     def roll(self):
@@ -64,7 +65,7 @@ class NanomsgClient(DatabaseClient):
         DatabaseClient.__init__(self)
         self.conn = Socket(PUB)
         self.lock = threading.Lock()
-        self.fw = FileWriter('nano_log', 1000000)
+        self.fw = FileWriter('nano_log', 1073741824)
 
     def connect(self, **kwargs):
         """
