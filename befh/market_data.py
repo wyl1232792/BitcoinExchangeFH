@@ -255,10 +255,10 @@ class Snapshot(MarketDataBase):
         assert l2_depth is not None and last_trade is not None, "L2 depth and last trade must not be none."
         return ([exchange_name] if exchange_name else []) + \
                ([instmt_name] if instmt_name else []) + \
-               [last_trade.trade_price, last_trade.trade_volume] + \
-               [b.price for b in l2_depth.bids[0:5]] + \
-               [a.price for a in l2_depth.asks[0:5]] + \
-               [b.volume for b in l2_depth.bids[0:5]] + \
-               [a.volume for a in l2_depth.asks[0:5]] + \
+               [float(last_trade.trade_price), float(last_trade.trade_volume)] + \
+               [float(b.price) for b in l2_depth.bids[0:5]] + \
+               [float(a.price) for a in l2_depth.asks[0:5]] + \
+               [float(b.volume) for b in l2_depth.bids[0:5]] + \
+               [float(a.volume) for a in l2_depth.asks[0:5]] + \
                [l2_depth.date_time, last_trade.date_time, update_type]
         

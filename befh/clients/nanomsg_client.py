@@ -6,7 +6,38 @@ import zmq
 from nanomsg import Socket, PUB
 import json
 import time
+import os
+import datetime
 
+# TODO write a simple log with raw data into rolled file
+class FileWriter:
+    def __init__(self, prefix, max_size):
+        self.id = 0
+        self.prefix = prefix
+        self.max_size = max_size
+        fn = self.get_filename()
+        self.size = self.get_size(fn)
+        self.fd = open(fn, 'a')
+    def write(self, buff):
+        if (self.size > self.max_size):
+            self.roll()
+        self.fd.write(buff + '\n')
+        self.size += len(buff)
+    def roll(self):
+        self.fd.close()
+        self.fd = open(self.get_filename(), 'a')
+    def get_filename(self):
+        while True:
+            f = self.produce_filename(self.id)
+            if (self.get_size(f) < self.max_size):
+                return f
+            self.id += 1
+    def get_size(self, name):
+        return os.path.getsize(name)
+    def produce_filename(self, id):
+        d = datetime.date.today()
+        ds = '%04d%02d%02d' % (d.year, d.month, d.day)
+        return '%s.%s.%04d.log' % (self.prefix, ds, id)
 
 class NanomsgClient(DatabaseClient):
     """
