@@ -407,3 +407,29 @@ instmt_name = LTCUSDT
 instmt_code = ltcusdt
 enabled = 1
 
+[Bitforex-btcusdt]
+exchange = Bitforex
+instmt_name = btcusdt
+instmt_code = coin-usdt-btc
+enabled = 1
+[Bitforex-ethusdt]
+exchange = Bitforex
+instmt_name = ethusdt
+instmt_code = coin-usdt-eth
+enabled = 1
+[Bitforex-ltcusdt]
+exchange = Bitforex
+instmt_name = ltcusdt
+instmt_code = coin-usdt-ltc
+enabled = 1
+[Bitforex-bchusdt]
+exchange = Bitforex
+instmt_name = bchusdt
+instmt_code = coin-usdt-bch
+enabled = 1
+[Bitforex-btceth]
+exchange = Bitforex
+instmt_name = btceth
+instmt_code = coin-eth-btc
+enabled = 1
+
