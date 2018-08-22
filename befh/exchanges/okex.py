@@ -25,7 +25,7 @@ class ExchGwApiOkexWs(WebSocketApiClient):
         """
         Constructor
         """
-        WebSocketApiClient.__init__(self, 'ExchApiHuoBi')
+        WebSocketApiClient.__init__(self, 'ExchApiOkex')
 
     @classmethod
     def get_bids_field_name(cls):
@@ -117,6 +117,9 @@ class ExchGwApiOkexWs(WebSocketApiClient):
             trades.append(trade)
         return trades
 
+    def get_ping_msg(self):
+        return '{"event":"ping"}'
+
 
 class ExchGwOkex(ExchangeGateway):
     """
@@ -169,6 +172,8 @@ class ExchGwOkex(ExchangeGateway):
         :param message: Message
         """
         _l = instmt.instmt_code.split('.')
+
+        print(message)
         for item in message:
             if 'channel' in item:
                 # if re.search(r'ok_sub_futureusd_(.*)_depth_(.*)', item['channel']):
