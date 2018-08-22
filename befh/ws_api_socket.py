@@ -106,6 +106,7 @@ class WebSocketApiClient(ApiSocket):
 
         if self.get_ping_msg() is not None:
             self.ping_thread = threading.Thread(target=self.send_interval_ping_msg)
+            self.ping_thread.start()
 
         while True:
             self.ws.run_forever()

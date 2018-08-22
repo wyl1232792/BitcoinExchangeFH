@@ -173,7 +173,6 @@ class ExchGwOkex(ExchangeGateway):
         """
         _l = instmt.instmt_code.split('.')
 
-        print(message)
         for item in message:
             if 'channel' in item:
                 # if re.search(r'ok_sub_futureusd_(.*)_depth_(.*)', item['channel']):
