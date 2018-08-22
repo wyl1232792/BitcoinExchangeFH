@@ -25,6 +25,7 @@ class FileWriter:
         if (self.size > self.max_size):
             self.roll()
         self.fd.write(buff + '\n')
+        print(self.fd)
         self.size += len(buff)+ 1
 
     def roll(self):
