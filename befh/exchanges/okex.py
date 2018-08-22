@@ -25,7 +25,7 @@ class ExchGwApiOkexWs(WebSocketApiClient):
         """
         Constructor
         """
-        WebSocketApiClient.__init__(self, 'ExchApiHuoBi')
+        WebSocketApiClient.__init__(self, 'ExchApiOkex')
 
     @classmethod
     def get_bids_field_name(cls):
