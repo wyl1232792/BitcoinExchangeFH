@@ -22,6 +22,7 @@ from befh.exchanges.liqui import ExchGwLiqui
 from befh.exchanges.binance import ExchGwBinance
 from befh.exchanges.cryptopia import ExchGwCryptopia
 from befh.exchanges.okex import ExchGwOkex
+from befh.exchanges.okex_spot import ExchGwOkexSpot
 from befh.exchanges.wex import ExchGwWex
 from befh.exchanges.bitflyer import ExchGwBitflyer
 from befh.exchanges.coinone import ExchGwCoinOne
@@ -173,6 +174,7 @@ def main():
     exch_gws.append(ExchGwBinanceWs(db_clients))
     exch_gws.append(ExchGwCryptopia(db_clients))
     exch_gws.append(ExchGwOkex(db_clients))
+    exch_gws.append(ExchGwOkexSpot(db_clients))
     exch_gws.append(ExchGwWex(db_clients))
     exch_gws.append(ExchGwFcoin(db_clients))
     exch_gws.append(ExchGwBitforex(db_clients))
