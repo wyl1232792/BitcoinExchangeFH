@@ -433,3 +433,78 @@ instmt_name = btceth
 instmt_code = coin-eth-btc
 enabled = 1
 
+[OkexSpot-ETHBTC]
+exchange = OkexSpot
+instmt_name = ETHBTC
+instmt_code = eth.btc
+enabled = 1
+[OkexSpot-XRPBTC]
+exchange = OkexSpot
+instmt_name = XRPBTC
+instmt_code = xrp.btc
+enabled = 1
+[OkexSpot-BCHBTC]
+exchange = OkexSpot
+instmt_name = BCHBTC
+instmt_code = bch.btc
+enabled = 1
+[OkexSpot-EOSBTC]
+exchange = OkexSpot
+instmt_name = EOSBTC
+instmt_code = eos.btc
+enabled = 1
+[OkexSpot-LTCBTC]
+exchange = OkexSpot
+instmt_name = LTCBTC
+instmt_code = ltc.btc
+enabled = 1
+[OkexSpot-XRPETH]
+exchange = OkexSpot
+instmt_name = XRPETH
+instmt_code = xrp.eth
+enabled = 1
+[OkexSpot-BCHETH]
+exchange = OkexSpot
+instmt_name = BCHETH
+instmt_code = bch.eth
+enabled = 1
+[OkexSpot-EOSETH]
+exchange = OkexSpot
+instmt_name = EOSETH
+instmt_code = eos.eth
+enabled = 1
+[OkexSpot-LTCETH]
+exchange = OkexSpot
+instmt_name = LTCETH
+instmt_code = ltc.eth
+enabled = 1
+[OkexSpot-BTCUSDT]
+exchange = OkexSpot
+instmt_name = BTCUSDT
+instmt_code = btc.usdt
+enabled = 1
+[OkexSpot-ETHUSDT]
+exchange = OkexSpot
+instmt_name = ETHUSDT
+instmt_code = eth.usdt
+enabled = 1
+[OkexSpot-XRPUSDT]
+exchange = OkexSpot
+instmt_name = XRPUSDT
+instmt_code = xrp.usdt
+enabled = 1
+[OkexSpot-BCHUSDT]
+exchange = OkexSpot
+instmt_name = BCHUSDT
+instmt_code = bch.usdt
+enabled = 1
+[OkexSpot-EOSUSDT]
+exchange = OkexSpot
+instmt_name = EOSUSDT
+instmt_code = eos.usdt
+enabled = 1
+[OkexSpot-LTCUSDT]
+exchange = OkexSpot
+instmt_name = LTCUSDT
+instmt_code = ltc.usdt
+enabled = 1

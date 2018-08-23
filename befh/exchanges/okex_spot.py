@@ -76,8 +76,9 @@ class ExchGwApiOkexSpotWs(WebSocketApiClient):
             asks = raw[cls.get_asks_field_name()]
             asks_len = min(l2_depth.depth, len(asks))
             for i in range(0, asks_len):
-                l2_depth.asks[i].price = float(asks[i][0]) if type(asks[i][0]) != float else asks[i][0]
-                l2_depth.asks[i].volume = float(asks[i][1]) if type(asks[i][1]) != float else asks[i][1]
+                j = -i - 1
+                l2_depth.asks[i].price = float(asks[j][0]) if type(asks[j][0]) != float else asks[j][0]
+                l2_depth.asks[i].volume = float(asks[j][1]) if type(asks[j][1]) != float else asks[j][1]
         else:
             raise Exception('Does not contain order book keys in instmt %s-%s.\nOriginal:\n%s' % \
                 (instmt.get_exchange_name(), instmt.get_instmt_name(), \

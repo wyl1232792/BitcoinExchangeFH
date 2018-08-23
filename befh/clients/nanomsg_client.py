@@ -11,33 +11,47 @@ import datetime
 
 # TODO write a simple log with raw data into rolled file
 class FileWriter:
+
     def __init__(self, prefix, max_size):
         self.id = 0
         self.prefix = prefix
         self.max_size = max_size
+        self.date = self.get_date()
         fn = self.get_filename()
         self.size = self.get_size(fn)
         self.fd = open(fn, 'a')
+
     def write(self, buff):
         if (self.size > self.max_size):
             self.roll()
         self.fd.write(buff + '\n')
-        self.size += len(buff)
+        self.size += len(buff)+ 1
+
     def roll(self):
         self.fd.close()
+        if self.get_date() != self.date:
+            self.date = self.get_date()
+            self.id = 0
         self.fd = open(self.get_filename(), 'a')
+        self.size = 0
+
     def get_filename(self):
         while True:
             f = self.produce_filename(self.id)
             if (self.get_size(f) < self.max_size):
                 return f
             self.id += 1
+
     def get_size(self, name):
-        return os.path.getsize(name)
-    def produce_filename(self, id):
+        return os.path.getsize(name) if os.path.exists(name) else 0
+
+    def get_date(self):
         d = datetime.date.today()
-        ds = '%04d%02d%02d' % (d.year, d.month, d.day)
-        return '%s.%s.%04d.log' % (self.prefix, ds, id)
+        return '%04d%02d%02d' % (d.year, d.month, d.day)
+
+    def produce_filename(self, id):
+        return '%s.%s.%04d.log' % (self.prefix, self.date, id)
+
 
 class NanomsgClient(DatabaseClient):
     """
@@ -50,6 +64,7 @@ class NanomsgClient(DatabaseClient):
         DatabaseClient.__init__(self)
         self.conn = Socket(PUB)
         self.lock = threading.Lock()
+        self.fw = FileWriter('nano_log', 1073741824)
 
     def connect(self, **kwargs):
         """
@@ -114,7 +129,10 @@ class NanomsgClient(DatabaseClient):
         ret = dict(zip(columns, values))
         ret['table'] = table
         self.lock.acquire()
-        self.conn.send(json.dumps(ret))
+        s = json.dumps(ret)
+        self.conn.send(s)
+        self.fw.write(s)
+
         self.lock.release()
         return True
 
