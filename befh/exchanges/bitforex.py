@@ -117,7 +117,7 @@ class ExchBitforex(WebSocketApiClient):
             trade.date_time = datetime.utcfromtimestamp(raw['time'] / 1000).strftime("%Y%m%d %H:%M:%S.%f")
 
             # Trade side
-            trade.trade_side = Trade.Side.NONE
+            trade.trade_side = Trade.parse_side(raw['direction'])
 
             # Trade id
             trade.trade_id = raw['tid']
