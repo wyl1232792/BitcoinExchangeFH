@@ -62,7 +62,7 @@ class ExchGwApiHuoBiWs(WebSocketApiClient):
 
     @classmethod
     def get_order_book_subscription_string(cls, instmt):
-        return json.dumps({"sub": "market.{}.depth.step2".format(instmt.instmt_code), "id": "id{}".format(cls.Client_Id)})
+        return json.dumps({"sub": "market.{}.depth.step0".format(instmt.instmt_code), "id": "id{}".format(cls.Client_Id)})
 
     @classmethod
     def get_trades_subscription_string(cls, instmt):
