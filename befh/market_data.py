@@ -246,7 +246,10 @@ class Snapshot(MarketDataBase):
                    ['decimal(20,8)'] * 10 + \
                    ['varchar(25)', 'varchar(25)', 'int']
 
-                
+    @staticmethod
+    def fill(arr, size=5, value=0):
+        return arr if len(arr) >= 5 else (arr + [value] * (size - len(arr)))
+
     @staticmethod
     def values(exchange_name='', instmt_name='', l2_depth=None, last_trade=None, update_type=UpdateType.NONE):
         """
@@ -256,9 +259,9 @@ class Snapshot(MarketDataBase):
         return ([exchange_name] if exchange_name else []) + \
                ([instmt_name] if instmt_name else []) + \
                [float(last_trade.trade_price), float(last_trade.trade_volume), int(last_trade.trade_side)] + \
-               [float(b.price) for b in l2_depth.bids[0:5]] + \
-               [float(a.price) for a in l2_depth.asks[0:5]] + \
-               [float(b.volume) for b in l2_depth.bids[0:5]] + \
-               [float(a.volume) for a in l2_depth.asks[0:5]] + \
+               Snapshot.fill([float(b.price) for b in l2_depth.bids[0:5]]) + \
+               Snapshot.fill([float(a.price) for a in l2_depth.asks[0:5]]) + \
+               Snapshot.fill([float(b.volume) for b in l2_depth.bids[0:5]]) + \
+               Snapshot.fill([float(a.volume) for a in l2_depth.asks[0:5]]) + \
                [l2_depth.date_time, last_trade.date_time, update_type]
         
