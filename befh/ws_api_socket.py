@@ -116,6 +116,7 @@ class WebSocketApiClient(ApiSocket):
     def __on_message(self, ws, m):
         if self._received_data_compressed is True:
             data = zlib.decompress(m, zlib.MAX_WBITS|16).decode('UTF-8')
+            print(data)
             m = json.loads(data)
         else:
             m = json.loads(m)
@@ -129,7 +130,7 @@ class WebSocketApiClient(ApiSocket):
         if len(self.on_open_handlers) > 0:
             for handler in self.on_open_handlers:
                 handler(ws)
-        
+
     def __on_close(self, ws):
         Logger.info(self.__class__.__name__, "Socket <%s> is closed." % self.id)
         self._connecting = False
@@ -137,7 +138,7 @@ class WebSocketApiClient(ApiSocket):
         if len(self.on_close_handlers) > 0:
             for handler in self.on_close_handlers:
                 handler(ws)
-        
+
     def __on_error(self, ws, error):
         Logger.info(self.__class__.__name__, "Socket <%s> error:\n %s" % (self.id, error))
         if len(self.on_error_handlers) > 0:

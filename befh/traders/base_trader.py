@@ -1,4 +1,5 @@
 from befh.traders.client_context import Account, Client
+from befh.logger import get_logger
 
 '''
     basic the class should hold all symbols' balances in trader
@@ -10,9 +11,12 @@ class BaseTrader():
         return '%08s' % self.order_id
 
     def __init__(self):
-        if self.alias_name is None:
+        try:
+            if (self.alias_name is None):
+                self.alias_name = 'unnamed'
+        except:
             self.alias_name = 'unnamed'
-        print('New trader [api=%s, name=%s]' % (self.get_alias_name(), self.get_name()))
+        get_logger().info('New trader [api=%s, name=%s]' % (self.get_alias_name(), self.get_name()))
         self.order_id = 0
 
         self.clients = []
@@ -29,6 +33,9 @@ class BaseTrader():
 
     def cancel_order(self, msg):
         pass
+
+    def generate_order_ref(self, msg):
+        return '%05d%08d' % (msg.client, msg.ref)
 
     def get_balance(self):
         pass

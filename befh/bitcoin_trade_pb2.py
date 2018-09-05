@@ -19,7 +19,7 @@ _sym_db = _symbol_database.Default()
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='bitcoin_trade.proto',
   package='br.trade.bitcoin',
-  serialized_pb=_b('\n\x13\x62itcoin_trade.proto\x12\x10\x62r.trade.bitcoin\"\x92\x02\n\nRequestMsg\x12\x0e\n\x06\x63lient\x18\x01 \x02(\x05\x12\x0b\n\x03ref\x18\x06 \x02(\x05\x12\x33\n\x08register\x18\x02 \x01(\x0b\x32\x1f.br.trade.bitcoin.RegisterStratH\x00\x12\x36\n\x06submit\x18\x03 \x01(\x0b\x32$.br.trade.bitcoin.SubmitOrderRequestH\x00\x12\x36\n\x06\x63\x61ncel\x18\x04 \x01(\x0b\x32$.br.trade.bitcoin.CancelOrderRequestH\x00\x12\x37\n\nunregister\x18\x05 \x01(\x0b\x32!.br.trade.bitcoin.UnregisterStratH\x00\x42\t\n\x07wrapped\"\xcf\x01\n\tNotifyMsg\x12\x0e\n\x06\x63lient\x18\x01 \x02(\x05\x12\x0b\n\x03ref\x18\x06 \x02(\x05\x12*\n\x06status\x18\x02 \x01(\x0b\x32\x18.br.trade.bitcoin.StatusH\x00\x12\x38\n\rstorageUpdate\x18\x03 \x01(\x0b\x32\x1f.br.trade.bitcoin.StorageUpdateH\x00\x12\x34\n\x0borderChange\x18\x04 \x01(\x0b\x32\x1d.br.trade.bitcoin.OrderChangeH\x00\x42\t\n\x07wrapped\"M\n\x14SimpleMultiTypeValue\x12\x0e\n\x04sint\x18\x01 \x01(\x05H\x00\x12\r\n\x03str\x18\x02 \x01(\tH\x00\x12\r\n\x03\x64\x62l\x18\x03 \x01(\x01H\x00\x42\x07\n\x05value\"#\n\x06Status\x12\x0c\n\x04\x63ode\x18\x01 \x02(\x05\x12\x0b\n\x03msg\x18\x02 \x01(\t\"S\n\rMapFieldEntry\x12\x0b\n\x03key\x18\x01 \x02(\t\x12\x35\n\x05value\x18\x02 \x02(\x0b\x32&.br.trade.bitcoin.SimpleMultiTypeValue\"a\n\rRegisterStrat\x12\x0c\n\x04name\x18\x01 \x02(\t\x12\x13\n\x0bmappingType\x18\x02 \x02(\t\x12-\n\x04opts\x18\x03 \x03(\x0b\x32\x1f.br.trade.bitcoin.MapFieldEntry\"\x1f\n\x0fUnregisterStrat\x12\x0c\n\x04type\x18\x01 \x02(\x05\"\x83\x02\n\x12SubmitOrderRequest\x12\x0e\n\x06symbol\x18\x01 \x02(\t\x12$\n\x04side\x18\x02 \x02(\x0e\x32\x16.br.trade.bitcoin.Side\x12.\n\torderType\x18\x03 \x02(\x0e\x32\x1b.br.trade.bitcoin.OrderType\x12\x10\n\x08quantity\x18\x04 \x02(\x01\x12\r\n\x05price\x18\x05 \x01(\x01\x12\x32\n\x0btimeInForce\x18\x06 \x01(\x0e\x32\x1d.br.trade.bitcoin.TimeInForce\x12\x32\n\x0bopenOrClose\x18\x07 \x01(\x0e\x32\x1d.br.trade.bitcoin.OpenOrClose\"%\n\x12\x43\x61ncelOrderRequest\x12\x0f\n\x07orderId\x18\x01 \x02(\t\">\n\tOpenOrder\x12\x0f\n\x07orderId\x18\x01 \x02(\t\x12\x0c\n\x04\x65xch\x18\x02 \x01(\t\x12\x12\n\nlimitPrice\x18\x03 \x01(\x01\"T\n\rStorageUpdate\x12\x0e\n\x06NetPnl\x18\x01 \x01(\x01\x12\x10\n\x08GrossPnl\x18\x02 \x01(\x01\x12\x0f\n\x07longPos\x18\x03 \x01(\x01\x12\x10\n\x08shortPos\x18\x04 \x01(\x01\"j\n\x0bOrderChange\x12/\n\x04\x63ode\x18\x01 \x02(\x0e\x32!.br.trade.bitcoin.OrderChangeCode\x12*\n\x05order\x18\x03 \x01(\x0b\x32\x1b.br.trade.bitcoin.OpenOrder*b\n\nStatusCode\x12\x0c\n\x07SUCCESS\x10\xc8\x01\x12\x18\n\x13UNREGISTERED_CLIENT\x10\x93\x03\x12\x14\n\x0fINVALID_REQUEST\x10\x94\x03\x12\x16\n\x11HANDLER_GOT_ERROR\x10\xf4\x03*\x1b\n\x04Side\x12\x08\n\x04LONG\x10\x01\x12\t\n\x05SHORT\x10\x02*\"\n\tOrderType\x12\t\n\x05LIMIT\x10\x01\x12\n\n\x06MARKET\x10\x02*\"\n\x0bOpenOrClose\x12\x08\n\x04OPEN\x10\x01\x12\t\n\x05\x43LOSE\x10\x02*W\n\x0bTimeInForce\x12\x07\n\x03\x44\x41Y\x10\x01\x12\x14\n\x10GOOD_TILL_CANCEL\x10\x02\x12\x17\n\x13IMMEDIATE_OR_CANCEL\x10\x03\x12\x10\n\x0c\x46ILL_OR_KILL\x10\x04*W\n\x0fOrderChangeCode\x12\x0b\n\x07\x43REATED\x10\x01\x12\x0c\n\x08REJECTED\x10\x02\x12\x0f\n\x0bPART_FILLED\x10\x03\x12\n\n\x06\x46ILLED\x10\x04\x12\x0c\n\x08\x43\x41NCELED\x10\x05')
+  serialized_pb=_b('\n\x13\x62itcoin_trade.proto\x12\x10\x62r.trade.bitcoin\"\x92\x02\n\nRequestMsg\x12\x0e\n\x06\x63lient\x18\x01 \x02(\x05\x12\x0b\n\x03ref\x18\x06 \x02(\x05\x12\x33\n\x08register\x18\x02 \x01(\x0b\x32\x1f.br.trade.bitcoin.RegisterStratH\x00\x12\x36\n\x06submit\x18\x03 \x01(\x0b\x32$.br.trade.bitcoin.SubmitOrderRequestH\x00\x12\x36\n\x06\x63\x61ncel\x18\x04 \x01(\x0b\x32$.br.trade.bitcoin.CancelOrderRequestH\x00\x12\x37\n\nunregister\x18\x05 \x01(\x0b\x32!.br.trade.bitcoin.UnregisterStratH\x00\x42\t\n\x07wrapped\"\xcf\x01\n\tNotifyMsg\x12\x0e\n\x06\x63lient\x18\x01 \x02(\x05\x12\x0b\n\x03ref\x18\x06 \x02(\x05\x12*\n\x06status\x18\x02 \x01(\x0b\x32\x18.br.trade.bitcoin.StatusH\x00\x12\x38\n\rstorageUpdate\x18\x03 \x01(\x0b\x32\x1f.br.trade.bitcoin.StorageUpdateH\x00\x12\x34\n\x0borderChange\x18\x04 \x01(\x0b\x32\x1d.br.trade.bitcoin.OrderChangeH\x00\x42\t\n\x07wrapped\"M\n\x14SimpleMultiTypeValue\x12\x0e\n\x04sint\x18\x01 \x01(\x05H\x00\x12\r\n\x03str\x18\x02 \x01(\tH\x00\x12\r\n\x03\x64\x62l\x18\x03 \x01(\x01H\x00\x42\x07\n\x05value\"#\n\x06Status\x12\x0c\n\x04\x63ode\x18\x01 \x02(\x05\x12\x0b\n\x03msg\x18\x02 \x01(\t\"S\n\rMapFieldEntry\x12\x0b\n\x03key\x18\x01 \x02(\t\x12\x35\n\x05value\x18\x02 \x02(\x0b\x32&.br.trade.bitcoin.SimpleMultiTypeValue\"a\n\rRegisterStrat\x12\x0c\n\x04name\x18\x01 \x02(\t\x12\x13\n\x0bmappingType\x18\x02 \x02(\t\x12-\n\x04opts\x18\x03 \x03(\x0b\x32\x1f.br.trade.bitcoin.MapFieldEntry\"\x1f\n\x0fUnregisterStrat\x12\x0c\n\x04type\x18\x01 \x02(\x05\"\x83\x02\n\x12SubmitOrderRequest\x12\x0e\n\x06symbol\x18\x01 \x02(\t\x12$\n\x04side\x18\x02 \x02(\x0e\x32\x16.br.trade.bitcoin.Side\x12.\n\torderType\x18\x03 \x02(\x0e\x32\x1b.br.trade.bitcoin.OrderType\x12\x10\n\x08quantity\x18\x04 \x02(\x01\x12\r\n\x05price\x18\x05 \x01(\x01\x12\x32\n\x0btimeInForce\x18\x06 \x01(\x0e\x32\x1d.br.trade.bitcoin.TimeInForce\x12\x32\n\x0bopenOrClose\x18\x07 \x01(\x0e\x32\x1d.br.trade.bitcoin.OpenOrClose\"%\n\x12\x43\x61ncelOrderRequest\x12\x0f\n\x07orderId\x18\x01 \x02(\t\"\xbe\x02\n\tOpenOrder\x12\x0e\n\x06symbol\x18\x01 \x02(\t\x12$\n\x04side\x18\x02 \x02(\x0e\x32\x16.br.trade.bitcoin.Side\x12.\n\torderType\x18\x03 \x02(\x0e\x32\x1b.br.trade.bitcoin.OrderType\x12\x10\n\x08quantity\x18\x04 \x02(\x01\x12\x0c\n\x04\x66ill\x18\x05 \x02(\x01\x12\x32\n\x0btimeInForce\x18\x06 \x01(\x0e\x32\x1d.br.trade.bitcoin.TimeInForce\x12\x32\n\x0bopenOrClose\x18\x07 \x01(\x0e\x32\x1d.br.trade.bitcoin.OpenOrClose\x12\x12\n\norderRefId\x18\x08 \x01(\t\x12\x12\n\norderSysId\x18\t \x02(\t\x12\x0c\n\x04\x65xch\x18\n \x01(\t\x12\r\n\x05price\x18\x0b \x01(\x01\"T\n\rStorageUpdate\x12\x0e\n\x06NetPnl\x18\x01 \x01(\x01\x12\x10\n\x08GrossPnl\x18\x02 \x01(\x01\x12\x0f\n\x07longPos\x18\x03 \x01(\x01\x12\x10\n\x08shortPos\x18\x04 \x01(\x01\"j\n\x0bOrderChange\x12/\n\x04\x63ode\x18\x01 \x02(\x0e\x32!.br.trade.bitcoin.OrderChangeCode\x12*\n\x05order\x18\x03 \x01(\x0b\x32\x1b.br.trade.bitcoin.OpenOrder*b\n\nStatusCode\x12\x0c\n\x07SUCCESS\x10\xc8\x01\x12\x18\n\x13UNREGISTERED_CLIENT\x10\x93\x03\x12\x14\n\x0fINVALID_REQUEST\x10\x94\x03\x12\x16\n\x11HANDLER_GOT_ERROR\x10\xf4\x03*\x1b\n\x04Side\x12\x08\n\x04LONG\x10\x01\x12\t\n\x05SHORT\x10\x02*\"\n\tOrderType\x12\t\n\x05LIMIT\x10\x01\x12\n\n\x06MARKET\x10\x02*\"\n\x0bOpenOrClose\x12\x08\n\x04OPEN\x10\x01\x12\t\n\x05\x43LOSE\x10\x02*W\n\x0bTimeInForce\x12\x07\n\x03\x44\x41Y\x10\x01\x12\x14\n\x10GOOD_TILL_CANCEL\x10\x02\x12\x17\n\x13IMMEDIATE_OR_CANCEL\x10\x03\x12\x10\n\x0c\x46ILL_OR_KILL\x10\x04*W\n\x0fOrderChangeCode\x12\x0b\n\x07\x43REATED\x10\x01\x12\x0c\n\x08REJECTED\x10\x02\x12\x0f\n\x0bPART_FILLED\x10\x03\x12\n\n\x06\x46ILLED\x10\x04\x12\x0c\n\x08\x43\x41NCELED\x10\x05')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -48,8 +48,8 @@ _STATUSCODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1420,
-  serialized_end=1518,
+  serialized_start=1677,
+  serialized_end=1775,
 )
 _sym_db.RegisterEnumDescriptor(_STATUSCODE)
 
@@ -71,8 +71,8 @@ _SIDE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1520,
-  serialized_end=1547,
+  serialized_start=1777,
+  serialized_end=1804,
 )
 _sym_db.RegisterEnumDescriptor(_SIDE)
 
@@ -94,8 +94,8 @@ _ORDERTYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1549,
-  serialized_end=1583,
+  serialized_start=1806,
+  serialized_end=1840,
 )
 _sym_db.RegisterEnumDescriptor(_ORDERTYPE)
 
@@ -117,8 +117,8 @@ _OPENORCLOSE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1585,
-  serialized_end=1619,
+  serialized_start=1842,
+  serialized_end=1876,
 )
 _sym_db.RegisterEnumDescriptor(_OPENORCLOSE)
 
@@ -148,8 +148,8 @@ _TIMEINFORCE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1621,
-  serialized_end=1708,
+  serialized_start=1878,
+  serialized_end=1965,
 )
 _sym_db.RegisterEnumDescriptor(_TIMEINFORCE)
 
@@ -183,8 +183,8 @@ _ORDERCHANGECODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1710,
-  serialized_end=1797,
+  serialized_start=1967,
+  serialized_end=2054,
 )
 _sym_db.RegisterEnumDescriptor(_ORDERCHANGECODE)
 
@@ -645,22 +645,78 @@ _OPENORDER = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='orderId', full_name='br.trade.bitcoin.OpenOrder.orderId', index=0,
+      name='symbol', full_name='br.trade.bitcoin.OpenOrder.symbol', index=0,
       number=1, type=9, cpp_type=9, label=2,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='exch', full_name='br.trade.bitcoin.OpenOrder.exch', index=1,
-      number=2, type=9, cpp_type=9, label=1,
+      name='side', full_name='br.trade.bitcoin.OpenOrder.side', index=1,
+      number=2, type=14, cpp_type=8, label=2,
+      has_default_value=False, default_value=1,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='orderType', full_name='br.trade.bitcoin.OpenOrder.orderType', index=2,
+      number=3, type=14, cpp_type=8, label=2,
+      has_default_value=False, default_value=1,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='quantity', full_name='br.trade.bitcoin.OpenOrder.quantity', index=3,
+      number=4, type=1, cpp_type=5, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='fill', full_name='br.trade.bitcoin.OpenOrder.fill', index=4,
+      number=5, type=1, cpp_type=5, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='timeInForce', full_name='br.trade.bitcoin.OpenOrder.timeInForce', index=5,
+      number=6, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=1,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='openOrClose', full_name='br.trade.bitcoin.OpenOrder.openOrClose', index=6,
+      number=7, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=1,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='orderRefId', full_name='br.trade.bitcoin.OpenOrder.orderRefId', index=7,
+      number=8, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='limitPrice', full_name='br.trade.bitcoin.OpenOrder.limitPrice', index=2,
-      number=3, type=1, cpp_type=5, label=1,
+      name='orderSysId', full_name='br.trade.bitcoin.OpenOrder.orderSysId', index=8,
+      number=9, type=9, cpp_type=9, label=2,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='exch', full_name='br.trade.bitcoin.OpenOrder.exch', index=9,
+      number=10, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='price', full_name='br.trade.bitcoin.OpenOrder.price', index=10,
+      number=11, type=1, cpp_type=5, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -676,8 +732,8 @@ _OPENORDER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1162,
-  serialized_end=1224,
+  serialized_start=1163,
+  serialized_end=1481,
 )
 
 
@@ -727,8 +783,8 @@ _STORAGEUPDATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1226,
-  serialized_end=1310,
+  serialized_start=1483,
+  serialized_end=1567,
 )
 
 
@@ -764,8 +820,8 @@ _ORDERCHANGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1312,
-  serialized_end=1418,
+  serialized_start=1569,
+  serialized_end=1675,
 )
 
 _REQUESTMSG.fields_by_name['register'].message_type = _REGISTERSTRAT
@@ -811,6 +867,10 @@ _SUBMITORDERREQUEST.fields_by_name['side'].enum_type = _SIDE
 _SUBMITORDERREQUEST.fields_by_name['orderType'].enum_type = _ORDERTYPE
 _SUBMITORDERREQUEST.fields_by_name['timeInForce'].enum_type = _TIMEINFORCE
 _SUBMITORDERREQUEST.fields_by_name['openOrClose'].enum_type = _OPENORCLOSE
+_OPENORDER.fields_by_name['side'].enum_type = _SIDE
+_OPENORDER.fields_by_name['orderType'].enum_type = _ORDERTYPE
+_OPENORDER.fields_by_name['timeInForce'].enum_type = _TIMEINFORCE
+_OPENORDER.fields_by_name['openOrClose'].enum_type = _OPENORCLOSE
 _ORDERCHANGE.fields_by_name['code'].enum_type = _ORDERCHANGECODE
 _ORDERCHANGE.fields_by_name['order'].message_type = _OPENORDER
 DESCRIPTOR.message_types_by_name['RequestMsg'] = _REQUESTMSG

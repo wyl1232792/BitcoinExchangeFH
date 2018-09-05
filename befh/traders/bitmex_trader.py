@@ -41,7 +41,7 @@ class BitmexTrader(BaseTrader):
         super().get_host_link()
 
     def query_pos(self):
-        self.initial_pos = {}
+        self.initial_pos = dict()
         result = self.client.Position.Position_get().result()
-        for o in result:
+        for o in result[0]:
             self.initial_pos[o['symbol']] = o

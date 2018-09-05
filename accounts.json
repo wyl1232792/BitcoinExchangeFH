@@ -1,0 +1,24 @@
+[
+  {
+    "name": "default",
+    "api": "sim"
+  },
+  {
+    "name": "test_bitmex",
+    "api": "bitmex",
+    "test": true,
+    "api_key": "fonAcHQjgO68FAOUqxzWx3t4",
+    "api_secret": "FcY56QtqaMGrvOdQIG4t0_81Evtlrk5NNZ11V3a-otHIkrpk",
+    "default_instr": "XBTUSDT"
+  },
+  {
+    "name": "test_okex",
+    "api": "okex_future",
+    "test": true,
+    "api_key": "77595bcc-b2a1-48a4-86e6-9c38a4d5c1af",
+    "api_secret": "343992A09B571C3A991D749D94B6D6DA",
+    "default_instr": "XBTUSDT"
+  }
+
+  
+]

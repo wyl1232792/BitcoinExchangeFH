@@ -1,5 +1,6 @@
 import befh.traders.base_trader
 from befh.traders.client_context import Client, Account
+from befh.logger import get_logger
 import befh.bitcoin_trade_pb2 as proto
 import json
 from befh.traders.bitmex_trader import BitmexTrader
@@ -25,11 +26,15 @@ class TraderManager:
 
     def init_traders(self, config):
         for client in config:
+            if (client['api'] not in __traders__.keys()):
+                get_logger().error("unknown api %s" % client['api'])
+                continue
             self.traders[client['name']] = __traders__[client['api']](client)
         pass
 
     def new_trader(self, config):
-        pass
+        self.traders[client['name']] = __traders__[client['api']](client)
+        return self.traders[client['name']]
 
     def resume(self):
         pass
@@ -44,14 +49,18 @@ class TraderManager:
             'mapping': msg.register.mappingType
         }
 
+    def rspAck(self, client, ref, code, msg):
+        ack = proto.NotifyMsg()
+        ack.client = client
+        ack.ref = ref
+        ack.status.code = code
+        ack.status.msg = msg
+        self.pub(ack)
+
+
     def handleMsg(self, msg):
         if msg.HasField('register'):
             mapping = msg.register.mappingType
-            print('register')
-            print('ref=%d' % msg.ref)
-            print('client=%d' % msg.client)
-            print('name=%s' % msg.register.name)
-            print('mappingType=' + mapping)
 
             # register client and bind trader
             # simple means fetch or create registered account
@@ -66,44 +75,36 @@ class TraderManager:
                     # get trader
                     if (msg.register.name not in self.traders.keys()):
                         # not found
-                        ack = proto.NotifyMsg()
-                        ack.client = msg.client
-                        ack.ref = msg.ref
-                        ack.status.code = proto.INVALID_REQUEST
-                        ack.status.msg = 'name not found'
-                        self.pub(ack)
+
+                        self.rspAck(msg.client, msg.ref, proto.INVALID_REQUEST, 'name not found')
+
                         return
 
                     trader = self.traders[msg.register.name]
                     # create client
                     _account = trader.get_account(self.produce_mapping_config(msg))
                     nc = Client(self, msg.client, _account, msg.ref)
-                    self.clients[msg.ref] = nc
+                    self.clients[msg.client] = nc
                     nc.set_trader_provider(SimpleTraderProvider(trader))
                     # bind client to trader
                     trader.add_client(nc)
 
                 # ack success
-                ack = proto.NotifyMsg()
-                ack.client = msg.client
-                ack.ref = msg.ref
-                ack.status.code = proto.SUCCESS
-                ack.status.msg = ''
-
-                self.pub(ack)
+                self.rspAck(msg.client, msg.ref, proto.SUCCESS, '')
 
             else:
-                print('error')
+                get_logger().info('error')
 
         elif msg.HasField('submit'):
-            print('s')
+            trader = self.clients[msg.client].get_trader_provider().get()
+            trader.submit_order(msg)
 
         elif msg.HasField('cancel'):
-            print('c')
+            trader = self.clients[msg.client].get_trader_provider().get()
+            trader.cancel_order(msg)
 
         elif msg.HasField('unregister'):
-            print('u')
-
+            pass
 
     def pub(self, notifyMsg):
         self.pubSink.send(notifyMsg.SerializeToString())
